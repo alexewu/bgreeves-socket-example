@@ -26,6 +26,7 @@ int send_message(const char *hostname, int port, const char *message) {
 	}
 
 	// (1) Create a socket
+	int sock = socket(AF_INET, SOCK_STREAM, 0);
 
 	// (2) Create a sockaddr_in to specify remote host and port
 	struct sockaddr_in addr;
@@ -34,10 +35,23 @@ int send_message(const char *hostname, int port, const char *message) {
 	}
 
 	// (3) Connect to remote server
+	int ret_code = connect(sock, (const sockaddr *) &addr, sizeof(addr));
+	if(ret_code == -1)
+	{
+		perror("error in connecting");
+		return -1;
+	}
 	
 	// (4) Send message to remote server
-
-	// (5) Close connection
+	send(sock, message, strlen(message), 0);
+	if(ret_code == -1)
+	{
+		perror("error in sending");
+		return -1;
+	}
+	
+	// (5) Close connection'
+	close(sock);
 
 	return 0;
 }
